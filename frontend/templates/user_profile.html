@@ -1,0 +1,22 @@
+<h1>Профіль користувача</h1>
+<p>Ім'я користувача: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+
+<h2>Ваші бронювання:</h2>
+{% for booking in bookings %}
+<div>
+  <h3>
+    Бронювання {{ booking.id }} на сеанс {{ booking.screening.movie.title }}
+  </h3>
+  <p>Дата: {{ booking.screening.date }}</p>
+  <p>Місця:</p>
+  <ul>
+    {% for ticket in booking.tickets.all %}
+    <li>
+      {{ ticket.seat.row }}-{{ ticket.seat.number }} ({{ ticket.price }} грн)
+    </li>
+    {% endfor %}
+  </ul>
+  <p>Загальна вартість: {{ booking.total_cost }}</p>
+</div>
+{% endfor %}

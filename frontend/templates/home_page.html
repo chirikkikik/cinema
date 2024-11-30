@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Головна</title>
+  </head>
+  <body>
+    <h1>Фільми</h1>
+    <div>
+      {% for movie in movies %}
+      <div>
+        <h2>{{ movie.title }}</h2>
+        <p>Дата релізу: {{ movie.release_date|date:"d/m/y" }}</p>
+        <p>Цільова аудиторія: {{ movie.get_target_audience_display }}</p>
+        <p>Тривалість: {{ movie.duration }}</p>
+        <a href="{% url 'choose_screening' %}" class="btn btn-primary"
+          >Купити квиток</a
+        >
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

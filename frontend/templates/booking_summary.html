@@ -1,0 +1,19 @@
+<h1>Ваше бронювання</h1>
+<p>
+  Сеанс: {{ booking.screening.movie.title }} ({{
+  booking.screening.date|date:"d/m/Y" }} о {{
+  booking.screening.start_at|time:"H:i" }})
+</p>
+<p>Квитки:</p>
+<ul>
+  {% for ticket in tickets %}
+  <li>
+    Місце: {{ ticket.seat.row }} ряд, {{ ticket.seat.number }} місце — {{
+    ticket.price }} грн
+    <a href="{% url 'remove_ticket_from_booking' ticket.id %}">Видалити</a>
+  </li>
+  {% endfor %}
+</ul>
+<p>Загальна вартість: {{ total_cost }} грн</p>
+<a href="{% url 'choose_screening' %}">Додати ще квиток</a>
+<a href="{% url 'payment' booking.id %}">Перейти до оплати</a>

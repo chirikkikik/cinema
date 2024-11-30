@@ -1,0 +1,11 @@
+<h2>Місця</h2>
+<form method="POST">
+  {% csrf_token %}
+  <label for="row">Ряд:</label>
+  <input type="text" id="row" name="row" required />
+
+  <label for="number">Місце:</label>
+  <input type="text" id="number" name="number" required />
+
+  <button type="submit" class="btn btn-primary">Забронювати місце</button>
+</form>

@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'movies',
     'bookings',
     'payments',
-    'cinema_booking_tickets',
+    'users',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'cinema_booking_tickets.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'localmysql',
+        'NAME': 'cinema_db',
         'USER': 'root',
         'PASSWORD': 'Kukuboomb00||',
         'HOST': '127.0.0.1',

@@ -1,9 +1,6 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.shortcuts import render, redirect
 from .models import Movie, Screening
-from .serializers import MovieSerializer, ScreeningSerializer
-import django_filters
+from .forms import MovieForm, ScreeningForm
 
 
 def home_page(request):
@@ -11,24 +8,30 @@ def home_page(request):
     return render(request, 'home_page.html', {'movies': movies})
 
 
-class MovieFilter(viewsets.ModelViewSet):
-    genre = django_filters.CharFilter(field_name='genre__name', lookup_expr='icontains', label='Genre')
-    title = django_filters.CharFilter(field_name='title', lookup_expr='icontains', label='Title')
-    
-    
-class MovieViewSet(viewsets.ModelViewSet):
-    queryset = Movie.objects.all()
-    serializer_class = MovieSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    filterset_class = MovieFilter
-    search_fields = ['title']
-    
-    
-class ScreeningViewSet(viewsets.ModelViewSet):
-    queryset = Screening.objects.all()
-    serializer_class = ScreeningSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    
+def create_movie(request):
+    if request.method == 'POST':
+        form = MovieForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home_page')
+    else:
+        form = MovieForm()
+
+    return render(request, 'movies/create_movie.html', {'form': form})
 
 
-    
+def create_screening(request):
+    if request.method == 'POST':
+        form = ScreeningForm(request.POST)
+        if form.is_valid():
+            form.save() 
+            return redirect('screening_list')
+    else:
+        form = ScreeningForm()
+
+    return render(request, 'movies/create_screening.html', {'form': form})
+
+
+def screening_list(request):
+    screenings = Screening.objects.all()
+    return render(request, 'movies/screening_list.html', {'screenings': screenings})

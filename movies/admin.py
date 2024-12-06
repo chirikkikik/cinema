@@ -1,10 +1,13 @@
 from django.contrib import admin
-from .models import Movie, Cinema, Audit, Screening, Seat
+from .models import Movie, Screening
 
-admin.site.register(Movie)
-admin.site.register(Cinema)
-admin.site.register(Audit)
-admin.site.register(Screening)
-admin.site.register(Seat)
+@admin.register(Movie)
+class MovieAdmin(admin.ModelAdmin):
+    list_display = ('title', 'release_date', 'genre', 'target_audience')
+    search_fields = ('title', 'genre')
 
-
+@admin.register(Screening)
+class ScreeningAdmin(admin.ModelAdmin):
+    list_display = ('movie', 'date', 'start_at', 'available_seats', 'cinema_hall')
+    list_filter = ('date', 'cinema_hall')
+    search_fields = ('movie__title', 'cinema_hall')

@@ -3,15 +3,16 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Booking, Ticket
-from movies.models import Screening, Seat
+from movies.models import Screening
 
 @login_required(login_url='/login/')
 def choose_screening(request):
     screenings = Screening.objects.all()
     context = {
-        'screenings': screenings,
+        'screenings': screenings, 
     }
     return render(request, 'choose_screening.html', context)
+
 
 @login_required(login_url='/login/')
 def choose_seat(request, screening_id):
@@ -27,23 +28,16 @@ def choose_seat(request, screening_id):
         row = request.POST.get('row')
         number = request.POST.get('number')
 
-        seat = Seat.objects.filter(screening=screening, row=row, number=number).first()
-        if not seat:
+        ticket = Ticket.objects.filter(screening=screening, row=row, number=number).first()
+        if not ticket:
             return HttpResponse("Цього місця нема в цій аудиторії", status=400)
-        if seat.is_taken:
+        if ticket.is_booked:
             return HttpResponse("Це місце вже заброньоване.", status=400)
         
-        ticket = Ticket.objects.create(
-            screening=screening,
-            seat=seat,
-            price=screening.movie.price,
-            is_booked=True
-        )
+        ticket.is_booked = True
+        ticket.save()
+
         booking.tickets.add(ticket)
-
-        seat.is_taken = True
-        seat.save()
-
         return redirect('booking_summary', booking_id=booking.id)
 
     context = {
@@ -71,8 +65,8 @@ def booking_summary(request, booking_id):
 def remove_ticket_from_booking(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, booking__is_paid=False, booking__user=request.user)
 
-    ticket.seat.is_taken = False
-    ticket.seat.save()
+    ticket.is_booked = False
+    ticket.save()
 
     ticket.delete()
 

@@ -9,17 +9,19 @@ def payment_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user, is_paid=False)
     
     if request.method == 'POST':
-        
         payment = Payment.objects.create(
             user=request.user,
             booking=booking,
-            amount=booking.total_cost()
+            amount=booking.total_cost(),
         )
+        
         payment.status = 'completed'
         payment.save()
+
         booking.is_paid = True
         booking.save()
-        
+
+        messages.success(request, "Оплата успішно завершена.")
         return redirect('payment_success')
     
     return render(request, 'payments/payment_form.html', {'booking': booking})

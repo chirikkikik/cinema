@@ -1,16 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import MovieViewSet, ScreeningViewSet
-from movies import views
-
-
-router = DefaultRouter()
-router.register(r'movies', MovieViewSet)
-router.register(r'screenings', ScreeningViewSet)
-
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('', views.home_page, name='home'),
-    path('', include(router.urls)),
-    
+    path('', views.home_page, name='home_page'),
+    path('create_movie/', views.create_movie, name='create_movie'),
+    path('create_screening/', views.create_screening, name='create_screening'),
 ]

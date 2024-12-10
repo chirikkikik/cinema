@@ -13,11 +13,11 @@ def create_movie(request):
         form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('home_page')
+            return redirect('/')
     else:
         form = MovieForm()
 
-    return render(request, 'movies/create_movie.html', {'form': form})
+    return render(request, 'create_movie.html', {'form': form})
 
 
 def create_screening(request):
@@ -29,9 +29,9 @@ def create_screening(request):
     else:
         form = ScreeningForm()
 
-    return render(request, 'movies/create_screening.html', {'form': form})
+    return render(request, 'create_screening.html', {'form': form})
 
 
 def screening_list(request):
     screenings = Screening.objects.all()
-    return render(request, 'movies/screening_list.html', {'screenings': screenings})
+    return render(request, 'screening_list.html', {'screenings': screenings})

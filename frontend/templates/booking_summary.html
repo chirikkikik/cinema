@@ -8,12 +8,11 @@
 <ul>
   {% for ticket in tickets %}
   <li>
-    Місце: {{ ticket.seat.row }} ряд, {{ ticket.seat.number }} місце — {{
-    ticket.price }} грн
+    Місце: {{ ticket.seat }} — {{ ticket.price }} грн
     <a href="{% url 'remove_ticket_from_booking' ticket.id %}">Видалити</a>
   </li>
   {% endfor %}
 </ul>
 <p>Загальна вартість: {{ total_cost }} грн</p>
 <a href="{% url 'choose_screening' %}">Додати ще квиток</a>
-<a href="{% url 'payment' booking.id %}">Перейти до оплати</a>
+<a href="{% url 'payment_form' booking.id %}">Перейти до оплати</a>

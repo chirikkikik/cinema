@@ -19,12 +19,13 @@ class Ticket(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     screening = models.ForeignKey(Screening, on_delete=models.CASCADE)
-    tickets_booked = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='booking')
+    tickets_booked = models.ManyToManyField(Ticket, blank=True)
     booking_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=[('Confirmed', 'Confirmed'), ('Cancelled', 'Cancelled')])
+    is_paid=models.BooleanField(default=False)
     
     def total_cost(self):
-        return sum(ticket.price for ticket in self.tickets.all())
+        return sum(ticket.price for ticket in self.tickets_booked.all())
     
     def cancel_booking(self):
         self.status = 'Cancelled'

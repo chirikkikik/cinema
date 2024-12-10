@@ -5,7 +5,7 @@ from .models import Payment
 from django.contrib import messages
 
 @login_required
-def payment_view(request, booking_id):
+def payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user, is_paid=False)
     
     if request.method == 'POST':
@@ -24,8 +24,8 @@ def payment_view(request, booking_id):
         messages.success(request, "Оплата успішно завершена.")
         return redirect('payment_success')
     
-    return render(request, 'payments/payment_form.html', {'booking': booking})
+    return render(request, 'payment_form.html', {'booking': booking})
 
 @login_required
 def payment_success(request):
-    return render(request, 'payments/payment_success.html')
+    return render(request, 'payment_success.html')

@@ -58,27 +58,35 @@ def booking_summary(request, booking_id):
         messages.info(request, "У вас немає квитків у цьому бронюванні.")
         return redirect('choose_screening')
 
+    if request.method == 'POST':
+        return redirect('payment_form', booking_id=booking.id)
+    
+    
     context = {
         'booking': booking,
         'tickets': booking.tickets_booked.all(),
         'total_cost': booking.total_cost(),
     }
     return render(request, 'booking_summary.html', context)
+    
+
 
 @login_required(login_url='/login/')
 def remove_ticket_from_booking(request, ticket_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id, booking__is_paid=False, booking__user=request.user)
-
+    ticket = get_object_or_404(Ticket, id=ticket_id, is_booked=True)
+    booking = Booking.objects.filter(tickets_booked=ticket, user=request.user).first()
     
-    ticket.seat = ''
+    if not booking:
+        messages.error(request, "Бронювання для цього квитка не знайдено.")
+        return redirect('booking_summary', booking_id=0)
+
+    booking.tickets_booked.remove(ticket)
     ticket.is_booked = False
     ticket.save()
 
-    ticket.delete()
-
     messages.success(request, "Квиток успішно видалено з вашого бронювання.")
-    
-    return redirect('booking_summary', booking_id=ticket.booking.id)
+    return redirect('booking_summary', booking_id=booking.id)
+
 
 
 

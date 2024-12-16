@@ -6,7 +6,12 @@ from django.contrib import messages
 
 @login_required
 def payment_form(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user, is_paid=False)
+    #booking = get_object_or_404(Booking, id=booking_id, user=request.user, is_paid=False)
+    try:
+        booking = get_object_or_404(Booking, id=booking_id, user=request.user, is_paid=False)
+    except Booking.DoesNotExist:
+        messages.error(request, "Бронювання не знайдено.")
+        return redirect('choose_screening')
     
     if request.method == 'POST':
         payment = Payment.objects.create(
@@ -14,7 +19,6 @@ def payment_form(request, booking_id):
             booking=booking,
             amount=booking.total_cost(),
         )
-        
         payment.status = 'completed'
         payment.save()
 
@@ -23,8 +27,9 @@ def payment_form(request, booking_id):
 
         messages.success(request, "Оплата успішно завершена.")
         return redirect('payment_success')
-    
+
     return render(request, 'payment_form.html', {'booking': booking})
+
 
 @login_required
 def payment_success(request):

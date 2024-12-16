@@ -11,3 +11,6 @@ class ScreeningAdmin(admin.ModelAdmin):
     list_display = ('movie', 'date', 'start_at', 'available_seats', 'cinema_hall')
     list_filter = ('date', 'cinema_hall')
     search_fields = ('movie__title', 'cinema_hall')
+    
+    def start_at(self, obj):
+        return obj.start_at.strftime('%H:%M')

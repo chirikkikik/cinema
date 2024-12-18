@@ -1,14 +1,13 @@
-<h2>Місця</h2>
-<form method="POST">
-  {% csrf_token %}
-  <label for="seat">Введіть місце (наприклад, A1):</label>
-  <input type="text" id="seat" name="seat" required />
-  <button type="submit" class="btn btn-primary">Забронювати місце</button>
-</form>
-
 <h3>Зайняті місця:</h3>
 <ul>
   {% for seat in taken_seats %}
   <li>{{ seat }}</li>
   {% endfor %}
 </ul>
+
+<form method="POST">
+  {% csrf_token %}
+  <label for="seat">Оберіть місце:</label>
+  <input type="text" name="seat" required />
+  <button type="submit">Забронювати</button>
+</form>

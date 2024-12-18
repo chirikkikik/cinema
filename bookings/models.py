@@ -27,6 +27,16 @@ class Booking(models.Model):
     def total_cost(self):
         return sum(ticket.price for ticket in self.tickets_booked.all())
     
+    def remove_ticket(self, ticket):
+        if ticket in self.tickets_booked.all():
+            ticket.is_booked = False
+            ticket.save()
+            self.tickets_booked.remove(ticket)
+            self.screening.available_seats += 1
+            self.screening.save()
+        else:
+            raise ValueError("Цей квиток не належить до цього бронювання.")
+        
     def cancel_booking(self):
         self.status = 'Cancelled'
         for ticket in self.tickets_booked.all():

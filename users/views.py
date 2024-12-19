@@ -47,7 +47,7 @@ def login_view(request):
 @login_required
 def user_profile(request):
     user = request.user
-    bookings = Booking.objects.filter(user=user, is_paid=True)
+    bookings = Booking.objects.filter(user=request.user, is_paid=True)
 
     context = {
         'user': user,

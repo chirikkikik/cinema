@@ -1,6 +1,5 @@
-<h1>Оплата бронювання</h1>
-<p>Загальна вартість: {{ booking.total_cost }}</p>
-<form method="post">
+<form method="POST" action="{% url 'payment_form' booking.id %}">
   {% csrf_token %}
+  <input type="hidden" name="amount" value="{{ booking.total_cost }}" />
   <button type="submit">Оплатити</button>
 </form>

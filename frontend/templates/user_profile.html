@@ -12,7 +12,7 @@
   <p>Місця:</p>
   <ul>
     {% for ticket in booking.tickets_booked.all %}
-    <li>{{ ticket.seat}} ({{ ticket.price }} грн)</li>
+    <li>{{ ticket.seat}}-{{ ticket.price }} грн</li>
     {% endfor %}
   </ul>
   <p>Загальна вартість: {{ booking.total_cost }}</p>

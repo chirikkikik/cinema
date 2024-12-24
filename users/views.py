@@ -1,6 +1,3 @@
-from django.contrib.auth.models import User
-from django.forms import ValidationError
-from django.core.validators import validate_email
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate

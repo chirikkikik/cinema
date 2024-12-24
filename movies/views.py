@@ -7,8 +7,7 @@ def home_page(request):
     movies = Movie.objects.all()
     return render(request, 'home_page.html', {'movies': movies})
 
-
-def create_movie(request):
+'''def create_movie(request):
     if request.method == 'POST':
         form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
@@ -29,7 +28,8 @@ def create_screening(request):
     else:
         form = ScreeningForm()
 
-    return render(request, 'create_screening.html', {'form': form})
+    return render(request, 'create_screening.html', {'form': form})'''
+
 
 
 def screening_list(request):

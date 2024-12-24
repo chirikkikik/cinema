@@ -25,7 +25,7 @@ class Movie(models.Model):
 
 class Screening(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='screenings')
-    start_at = models.TimeField()
+    start_time = models.TimeField()
     date = models.DateField()
     available_seats = models.PositiveIntegerField()
     cinema_hall = models.CharField(max_length=255)

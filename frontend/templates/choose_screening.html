@@ -2,8 +2,7 @@
 <ul>
   {% for screening in screenings %}
   <li>
-    {{ screening.movie.title }} - {{ screening.date }} о {{ screening.start_at
-    }}
+    {{ screening.date }} о {{ screening.start_time }}
     <a href="{% url 'choose_seat' screening.id %}">Обрати місце</a>
   </li>
   {% endfor %}

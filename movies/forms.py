@@ -9,5 +9,5 @@ class MovieForm(forms.ModelForm):
 class ScreeningForm(forms.ModelForm):
     class Meta:
         model = Screening
-        fields = ['start_time', 'movie', 'cinema_hall', 'date',  'available_seats']
+        fields = '__all__'
         

@@ -14,7 +14,7 @@ class Movie(models.Model):
     description = models.TextField(default='No description yet.', blank=True)
     duration = models.DurationField()
     target_audience = models.IntegerField(choices = age_groups, default = 0)
-    poster = models.ImageField(upload_to='movies_images/', null=True, blank=True)
+    poster = models.ImageField(upload_to='posters/', null=True, blank=True)
         
     def __str__(self):
         return f"{self.title}"

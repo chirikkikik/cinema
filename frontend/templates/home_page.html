@@ -31,3 +31,10 @@
     </div>
   </body>
 </html>
+{% if user.is_authenticated %}
+<p>Привіт, {{ user.username }}!</p>
+<a href="{% url 'logout' %}">Вийти</a>
+{% else %}
+<a href="{% url 'login' %}">Увійти</a>
+<a href="{% url 'register' %}">Зареєструватися</a>
+{% endif %}

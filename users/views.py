@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from bookings.models import Booking
 from .forms import CustomLoginForm, RegistrationForm
@@ -26,20 +26,21 @@ def login_view(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('/')
-            else:
-                messages.error(request, 'Invalid username or password.')
+            user = form.get_user()
+            login(request, user)
+            if user.is_superuser:
+                return redirect('/admin/')
+            return redirect('/')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            messages.error(request, 'Невірний логін або пароль.')
     else:
         form = CustomLoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 @login_required
 def user_profile(request):

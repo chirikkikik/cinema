@@ -12,6 +12,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
+            user.email(form.cleaned_data ["email"])
             user.save()
             messages.success(request, 'Registration successful. You can now log in.')
             return redirect('login') 

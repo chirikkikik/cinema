@@ -34,6 +34,7 @@
 {% if user.is_authenticated %}
 <p>{{ user.username }}!</p>
 <a href="{% url 'logout' %}">Вийти</a>
+<a href="{% url "user_profile" %}">Мій профіль</a>
 {% else %}
 <a href="{% url 'login' %}">Увійти</a>
 <a href="{% url 'register' %}">Зареєструватися</a>

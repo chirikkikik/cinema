@@ -9,3 +9,5 @@ class BookingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['tickets_booked'].queryset = Ticket.objects.filter(is_booked=False)
+
+    

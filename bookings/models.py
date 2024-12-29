@@ -6,11 +6,11 @@ from django.contrib.auth.models import User
 class Ticket(models.Model):
     screening = models.ForeignKey(Screening,  on_delete = models.CASCADE, related_name='tickets')
     price = models.DecimalField(max_digits=10, decimal_places=2, default = 0.0)
-    seat = models.CharField(max_length=5, default = '')
+    seat = models.CharField(max_length=5)
     is_booked = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.seat}-{self.screening}"
     
     class Meta:
         db_table = 'Tickets'

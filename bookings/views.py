@@ -2,13 +2,13 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Booking, Ticket
-from movies.models import Screening
+from movies.models import Screening, Movie
 
 @login_required(login_url='/login/')
-def choose_screening(request):
-    screenings = Screening.objects.all()
+def choose_screening(request, movie_id):
+    screenings = Screening.objects.filter(movie_id=movie_id)
     context = {
-        'screenings': screenings, 
+        'screenings': screenings,
     }
     return render(request, 'choose_screening.html', context)
 
@@ -51,23 +51,22 @@ def choose_seat(request, screening_id):
 
 @login_required(login_url='/login/')
 def booking_summary(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status = 'Pending')
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='Pending')
 
     if not booking.tickets_booked.exists():
         messages.info(request, "У вас немає квитків у цьому бронюванні.")
-        return redirect('choose_screening')
+        return redirect('choose_screening', movie_id=booking.screening.movie.id)
 
     if request.method == 'POST':
         return redirect('payment_form', booking_id=booking.id)
-    
-    
+
     context = {
         'booking': booking,
         'tickets': booking.tickets_booked.all(),
         'total_cost': booking.total_cost(),
     }
     return render(request, 'booking_summary.html', context)
-    
+
 
 
 @login_required(login_url='/login/')

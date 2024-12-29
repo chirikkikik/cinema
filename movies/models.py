@@ -42,7 +42,7 @@ class Screening(models.Model):
         self.save()
         
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.movie.title} - {self.date} - {self.start_time}"
     
     class Meta:
         db_table = 'Screenings'

@@ -13,5 +13,5 @@
   {% endfor %}
 </ul>
 <p>Загальна вартість: {{ total_cost }} грн</p>
-<a href="{% url 'choose_screening' %}">Додати ще квиток</a>
+<a href="{% url 'choose_seat' booking.screening.id %}">Додати ще квиток</a>
 <a href="{% url 'payment_form' booking.id %}">Перейти до оплати</a>

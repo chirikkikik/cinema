@@ -27,12 +27,6 @@ SECRET_KEY = 'django-insecure-21ubkh(nj3b73uwx$a0udp+@#cwh7j(p)69ae7t^xe52a1vs-@
 DEBUG = True
 
 ALLOWED_HOSTS = []
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend/static/media')
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
-
 
 # Application definition
 
@@ -150,3 +144,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend/static/media')

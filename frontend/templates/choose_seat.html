@@ -10,4 +10,7 @@
   <label for="seat">Оберіть місце:</label>
   <input type="text" name="seat" required />
   <button type="submit">Забронювати</button>
+  {% if error_message %}
+  <div class="error">{{ error_message }}</div>
+  {% endif %}
 </form>

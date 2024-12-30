@@ -21,8 +21,10 @@ def choose_seat(request, screening_id):
         screening=screening,
         status='Pending'
     )
+    error_message = None
     if created:
         messages.info(request, "Створено нове бронювання.")
+        
 
     all_tickets = Ticket.objects.filter(screening=screening)
     taken_seats = all_tickets.filter(is_booked=True).values_list('seat', flat=True)
@@ -31,9 +33,9 @@ def choose_seat(request, screening_id):
         seat = request.POST.get('seat')
         ticket = all_tickets.filter(seat=seat).first()
         if not ticket:
-            messages.error(request, "Некоректний номер місця.")
+            error_message = "Некоректний номер місця. Будь ласка введіть назву місця у форматі 'A1'."
         elif ticket.is_booked:
-            messages.error(request, "Це місце вже зайняте.")
+            error_message = "Це місце вже зайняте. Будь ласка виберіть інше місце."
         else:
             ticket.is_booked = True
             ticket.save()
@@ -45,6 +47,7 @@ def choose_seat(request, screening_id):
         'screening': screening,
         'booking': booking,
         'taken_seats': taken_seats,
+        'error_message': error_message
     }
     return render(request, 'choose_seat.html', context)
 

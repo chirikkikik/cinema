@@ -55,16 +55,19 @@ def choose_seat(request, screening_id):
     return render(request, 'choose_seat.html', context)
 
 
-
 @login_required(login_url='/login/')
 def booking_summary(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='Pending')
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='pending')
 
     if request.method == 'POST':
-        if 'confirm_booking' in request.POST:
-            return confirm_booking(request, booking_id)
-        elif 'cancel_booking' in request.POST:
-            return cancel_booking(request, booking_id)
+        if 'remove_ticket' in request.POST:
+            ticket_id = request.POST.get('ticket_id')
+            return remove_ticket_from_booking(request, ticket_id)
+        elif 'confirm_booking' in request.POST:
+            booking.status = 'confirmed'
+            booking.save()
+            messages.success(request, "Ваше бронювання підтверджено.")
+            return redirect('user_profile')
 
     context = {
         'booking': booking,
@@ -74,36 +77,44 @@ def booking_summary(request, booking_id):
     return render(request, 'booking_summary.html', context)
 
 
-
-
 @login_required(login_url='/login/')
 def remove_ticket_from_booking(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, is_booked=True)
-    booking = Booking.objects.filter(tickets_booked=ticket, user=request.user).first()
+    booking = Booking.objects.filter(tickets_booked=ticket, user=request.user, status='pending').first()
     
     if not booking:
-        messages.error(request, "Бронювання для цього квитка не знайдено або квиток вам не належить.")
-        return redirect('choose_screening')
+        messages.error(request, "Квиток не належить до жодного з ваших активних бронювань.")
+        return redirect('user_profile')
 
-    booking.tickets_booked.remove(ticket)
     ticket.is_booked = False
+    ticket.screening.increase_seat()
     ticket.save()
     
-    screening = ticket.screening
-    screening.increase_seat()
-    screening.save()
+    booking.tickets_booked.remove(ticket)
+    
+    if not booking.tickets_booked.exists():
+        booking.delete()
+        messages.info(request, "Усі квитки видалено. Бронювання скасовано.")
+        return redirect('choose_screening')
 
-    messages.success(request, "Квиток успішно видалено з вашого бронювання.")
+    messages.success(request, "Квиток успішно видалено.")
     return redirect('booking_summary', booking_id=booking.id)
 
 
 @login_required(login_url='/login/')
 def cancel_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='Pending')
-    booking.cancel_booking()
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='pending')
+    
+    for ticket in booking.tickets_booked.all():
+        ticket.is_booked = False
+        ticket.screening.increase_seat()
+        ticket.save()
+    
+    booking.delete()
+    
+    messages.info(request, "Ваше бронювання успішно скасовано.")
+    return redirect('user_profile')
 
-    messages.info(request, "Ваше бронювання скасовано.")
-    return redirect('choose_screening')
 
 
 

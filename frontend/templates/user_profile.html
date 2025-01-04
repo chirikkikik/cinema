@@ -3,17 +3,55 @@
 <p>Email: {{ user.email }}</p>
 
 <h2>Ваші бронювання:</h2>
-{% for booking in bookings %}
-<div>
-  <h3>Бронювання на сеанс {{ booking.screening.movie.title }}</h3>
-  <p>Дата: {{ booking.screening.date }}</p>
-  <p>Місця:</p>
+<head>
+  {% if bookings %} {% for booking in bookings %}
+  <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px">
+    <h3>Бронювання на сеанс: {{ booking.screening.movie.title }}</h3>
+    <p>Дата: {{ booking.screening.date }}</p>
+    <p>Час: {{ booking.screening.start_time }}</p>
+    <p>Місця:</p>
+    <ul>
+      {% for ticket in booking.tickets_booked.all %}
+      <li>Місце: {{ ticket.seat }} — {{ ticket.price }} грн</li>
+      {% endfor %}
+    </ul>
+    <p>Загальна вартість: {{ booking.total_cost }} грн</p>
+
+    <div>
+      {% if not booking.is_paid %}
+      <form method="POST" style="display: inline">
+        {% csrf_token %}
+        <input type="hidden" name="booking_id" value="{{ booking.id }}" />
+        <button type="submit" name="action" value="pay" class="btn btn-success">
+          Оплатити
+        </button>
+      </form>
+      <form method="POST" style="display: inline">
+        {% csrf_token %}
+        <input type="hidden" name="booking_id" value="{{ booking.id }}" />
+        <button
+          type="submit"
+          name="action"
+          value="delete"
+          class="btn btn-danger"
+        >
+          Видалити
+        </button>
+      </form>
+      {% else %}
+      <p style="color: green">Бронювання оплачено</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <p>У вас немає активних бронювань.</p>
+  {% endif %} {% if messages %}
   <ul>
-    {% for ticket in booking.tickets_booked.all %}
-    <li>{{ ticket.seat}}-{{ ticket.price }} грн</li>
+    {% for message in messages %}
+    <li>{{ message }}</li>
     {% endfor %}
   </ul>
-  <p>Загальна вартість: {{ booking.total_cost }}</p>
-</div>
-{% endfor %}
+  {% endif %}
+</head>
+
 <a href="{% url 'home_page' %}" class="btn btn-primary">На головну</a>

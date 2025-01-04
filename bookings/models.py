@@ -42,14 +42,10 @@ class Booking(models.Model):
             self.screening.save()
             self.save()
     
-    def cancel_booking(self):
-        self.status = 'Cancelled'
+    def delete(self, *args, **kwargs):
         for ticket in self.tickets_booked.all():
-            ticket.is_booked = False
-            ticket.save()
-        self.screening.increase_seat()
-        self.screening.save()
-        self.save()
+            self.remove_ticket(ticket)
+        super().delete(*args, **kwargs)
         
         
     def __str__(self):

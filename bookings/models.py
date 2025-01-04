@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils import timezone
 from django.db import models
 from movies.models import Screening
 from django.contrib.auth.models import User
@@ -21,8 +23,12 @@ class Booking(models.Model):
     screening = models.ForeignKey(Screening, on_delete=models.CASCADE)
     tickets_booked = models.ManyToManyField(Ticket, blank=True)
     booking_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=50, choices=[('Confirmed', 'Confirmed'), ('Cancelled', 'Cancelled')])
     is_paid=models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=[
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+    ], default='pending')
     
     def total_cost(self):
         return sum(ticket.price for ticket in self.tickets_booked.all())
@@ -32,20 +38,20 @@ class Booking(models.Model):
             ticket.is_booked = False
             ticket.save()
             self.tickets_booked.remove(ticket)
-            self.screening.available_seats += 1
+            self.screening.increase_seat()
             self.screening.save()
-        else:
-            raise ValueError("Цей квиток не належить до цього бронювання.")
-        
+            self.save()
+    
     def cancel_booking(self):
         self.status = 'Cancelled'
         for ticket in self.tickets_booked.all():
             ticket.is_booked = False
             ticket.save()
-        self.screening.available_seats += self.tickets_booked.count()
+        self.screening.increase_seat()
         self.screening.save()
         self.save()
-
+        
+        
     def __str__(self):
         return f"Booking for {self.user.username} at {self.screening.movie.title} on {self.screening.start_time}"
 

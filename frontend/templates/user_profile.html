@@ -5,9 +5,7 @@
 <h2>Ваші бронювання:</h2>
 {% for booking in bookings %}
 <div>
-  <h3>
-    Бронювання {{ booking.id }} на сеанс {{ booking.screening.movie.title }}
-  </h3>
+  <h3>Бронювання на сеанс {{ booking.screening.movie.title }}</h3>
   <p>Дата: {{ booking.screening.date }}</p>
   <p>Місця:</p>
   <ul>

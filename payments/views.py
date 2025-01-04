@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from bookings.models import Booking
 from .models import Payment
@@ -6,11 +6,7 @@ from django.contrib import messages
 
 @login_required(login_url='/login/')
 def payment_form(request, booking_id):
-    try:
-        booking = Booking.objects.get(id=booking_id, user=request.user)
-    except Booking.DoesNotExist:
-        messages.error(request, "Бронювання не знайдено.")
-        return redirect('choose_screening')
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
     if request.method == 'POST':
         if not Payment.objects.filter(booking=booking).exists():
@@ -18,8 +14,11 @@ def payment_form(request, booking_id):
                 user=request.user,
                 booking=booking,
                 amount=booking.total_cost(),
-                status='completed'
+                status='completed',
             )
+            booking.is_paid = True
+            booking.status = 'confirmed'
+            booking.save()
             messages.success(request, "Оплата успішно завершена.")
             return redirect('payment_success')
 

@@ -1,16 +1,31 @@
-<h3>Зайняті місця:</h3>
+{% block content %}
+<h2>Виберіть місце для сеансу "{{ screening.movie.title }}"</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  <div>
+    <label for="seat">Оберіть місце:</label>
+    <input
+      type="text"
+      name="seat"
+      id="seat"
+      placeholder="Наприклад, A1"
+      required
+    />
+  </div>
+  <div>
+    <button type="submit">Забронювати місце</button>
+  </div>
+</form>
+
+{% if error_message %}
+<p style="color: red">{{ error_message }}</p>
+{% endif %}
+
+<h3>Заброньовані місця:</h3>
 <ul>
   {% for seat in taken_seats %}
   <li>{{ seat }}</li>
   {% endfor %}
 </ul>
-
-<form method="POST">
-  {% csrf_token %}
-  <label for="seat">Оберіть місце:</label>
-  <input type="text" name="seat" required />
-  <button type="submit">Забронювати</button>
-  {% if error_message %}
-  <div class="error">{{ error_message }}</div>
-  {% endif %}
-</form>
+{% endblock %}

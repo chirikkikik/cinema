@@ -16,28 +16,31 @@ def choose_screening(request, movie_id):
 @login_required(login_url='/login/')
 def choose_seat(request, screening_id):
     screening = get_object_or_404(Screening, id=screening_id)
-    booking, created = Booking.objects.get_or_create(
-        user=request.user,
-        screening=screening,
-        status='Pending'
-    )
-    error_message = None
-    if created:
+    booking = Booking.objects.filter(user=request.user, screening=screening, status='Pending').first()
+    
+    if not booking:
+        booking = Booking.objects.create(
+            user=request.user,
+            screening=screening,
+            status='Pending'
+        )
         messages.info(request, "Створено нове бронювання.")
-        
 
     all_tickets = Ticket.objects.filter(screening=screening)
     taken_seats = all_tickets.filter(is_booked=True).values_list('seat', flat=True)
 
+    error_message = None
     if request.method == 'POST':
         seat = request.POST.get('seat')
         ticket = all_tickets.filter(seat=seat).first()
+
         if not ticket:
-            error_message = "Некоректний номер місця. Будь ласка введіть назву місця у форматі 'A1'."
+            error_message = "Некоректний номер місця. Будь ласка, введіть назву місця у форматі 'A1'."
         elif ticket.is_booked:
-            error_message = "Це місце вже зайняте. Будь ласка виберіть інше місце."
+            error_message = "Це місце вже зайняте. Будь ласка, виберіть інше."
         else:
             ticket.is_booked = True
+            screening.decrease_seat()
             ticket.save()
             booking.tickets_booked.add(ticket)
             messages.success(request, f"Місце {seat} успішно заброньовано.")
@@ -47,21 +50,21 @@ def choose_seat(request, screening_id):
         'screening': screening,
         'booking': booking,
         'taken_seats': taken_seats,
-        'error_message': error_message
+        'error_message': error_message,
     }
     return render(request, 'choose_seat.html', context)
+
 
 
 @login_required(login_url='/login/')
 def booking_summary(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='Pending')
 
-    if not booking.tickets_booked.exists():
-        messages.info(request, "У вас немає квитків у цьому бронюванні.")
-        return redirect('choose_screening', movie_id=booking.screening.movie.id)
-
     if request.method == 'POST':
-        return redirect('payment_form', booking_id=booking.id)
+        if 'confirm_booking' in request.POST:
+            return confirm_booking(request, booking_id)
+        elif 'cancel_booking' in request.POST:
+            return cancel_booking(request, booking_id)
 
     context = {
         'booking': booking,
@@ -69,6 +72,7 @@ def booking_summary(request, booking_id):
         'total_cost': booking.total_cost(),
     }
     return render(request, 'booking_summary.html', context)
+
 
 
 
@@ -86,11 +90,20 @@ def remove_ticket_from_booking(request, ticket_id):
     ticket.save()
     
     screening = ticket.screening
-    screening.available_seats += 1
+    screening.increase_seat()
     screening.save()
 
     messages.success(request, "Квиток успішно видалено з вашого бронювання.")
     return redirect('booking_summary', booking_id=booking.id)
+
+
+@login_required(login_url='/login/')
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='Pending')
+    booking.cancel_booking()
+
+    messages.info(request, "Ваше бронювання скасовано.")
+    return redirect('choose_screening')
 
 
 

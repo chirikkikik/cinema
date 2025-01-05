@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from bookings.models import Booking
 from .models import Payment
-from django.contrib import messages
 
 @login_required(login_url='/login/')
 def payment_form(request, booking_id):
@@ -19,7 +18,6 @@ def payment_form(request, booking_id):
             booking.is_paid = True
             booking.status = 'confirmed'
             booking.save()
-            messages.success(request, "Оплата успішно завершена.")
             return redirect('payment_success')
 
     context = {'booking': booking}

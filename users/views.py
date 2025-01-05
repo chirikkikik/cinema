@@ -48,7 +48,7 @@ def logout_view(request):
 @login_required(login_url='/login/')
 def user_profile(request):
     user = request.user
-    bookings = Booking.objects.filter(user=user)
+    bookings = Booking.objects.filter(user=request.user)
     error_message = None
 
     if request.method == 'POST':
@@ -72,7 +72,6 @@ def user_profile(request):
                 )
                 booking.is_paid = True
                 booking.save()
-                messages.success(request, "Оплата успішно завершена.")
             else:
                 error_message = "Це бронювання вже оплачено."
 
@@ -84,8 +83,7 @@ def user_profile(request):
                 messages.success(request, "Бронювання успішно видалено.")
             else:
                 error_message = "Оплачене бронювання не можна видалити."
-
-    bookings = Booking.objects.filter(user=user)
+                
     context = {
         'bookings': bookings,
         'error_message': error_message,

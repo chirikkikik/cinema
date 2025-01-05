@@ -24,7 +24,6 @@ def choose_seat(request, screening_id):
             screening=screening,
             status='Pending'
         )
-        messages.info(request, "Створено нове бронювання.")
 
     all_tickets = Ticket.objects.filter(screening=screening)
     taken_seats = all_tickets.filter(is_booked=True).values_list('seat', flat=True)
@@ -43,7 +42,6 @@ def choose_seat(request, screening_id):
             screening.decrease_seat()
             ticket.save()
             booking.tickets_booked.add(ticket)
-            messages.success(request, f"Місце {seat} успішно заброньовано.")
             return redirect('booking_summary', booking_id=booking.id)
 
     context = {
@@ -94,10 +92,10 @@ def remove_ticket_from_booking(request, ticket_id):
     
     if not booking.tickets_booked.exists():
         booking.delete()
-        messages.info(request, "Усі квитки видалено. Бронювання скасовано.")
-        return redirect('choose_screening')
+        return redirect('home_page')
 
     messages.success(request, "Квиток успішно видалено.")
+    print("Квиток видалено")
     return redirect('booking_summary', booking_id=booking.id)
 
 

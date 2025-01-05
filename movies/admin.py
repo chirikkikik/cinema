@@ -8,7 +8,7 @@ class MovieAdmin(admin.ModelAdmin):
 
 @admin.register(Screening)
 class ScreeningAdmin(admin.ModelAdmin):
-    list_display = ('start_time', 'movie', 'date', 'available_seats', 'cinema_hall')
+    list_display = ('start_time', 'movie', 'date', 'available_seats', 'total_seats', 'cinema_hall')
     list_filter = ('date', 'cinema_hall')
     search_fields = ('movie__title', 'cinema_hall')
     

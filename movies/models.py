@@ -1,5 +1,5 @@
-
 from django.db import models
+
 
 class Movie(models.Model):
     age_groups = (
@@ -28,6 +28,7 @@ class Screening(models.Model):
     start_time = models.TimeField()
     date = models.DateField()
     available_seats = models.PositiveIntegerField()
+    total_seats= models.PositiveIntegerField(default=0)
     cinema_hall = models.CharField(max_length=255)
     
     def decrease_seat(self):
@@ -38,8 +39,10 @@ class Screening(models.Model):
             raise ValueError("No available seats")
     
     def increase_seat(self):
-        self.available_seats += 1
-        self.save()
+        if self.available_seats < self.total_seats:
+            self.available_seats += 1
+            self.save()
+            
         
     def __str__(self):
         return f"{self.movie.title} - {self.date} - {self.start_time}"

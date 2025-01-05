@@ -15,6 +15,7 @@ def populate_screenings():
                 'start_time': time(randint(10,20), 0),
                 'date': today + timedelta(days=randint(1, 4)),
                 'available_seats': 30,
+                'total_seats': 30,
                 'cinema_hall': f"Hall {choice([1, 2])}"
             })
 

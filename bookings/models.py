@@ -1,5 +1,3 @@
-from datetime import timedelta
-from django.utils import timezone
 from django.db import models
 from movies.models import Screening
 from django.contrib.auth.models import User

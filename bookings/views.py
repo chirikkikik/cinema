@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Booking, Ticket
-from movies.models import Screening, Movie
+from movies.models import Screening
 
 @login_required(login_url='/login/')
 def choose_screening(request, movie_id):

@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'payments',
     'users',
     'rest_framework',
-    'rest_framework.authtoken',
-    'django_filters',
 ]
 
 

@@ -86,6 +86,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'cinema_booking_tickets.wsgi.application'
 
 

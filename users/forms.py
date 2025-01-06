@@ -24,12 +24,12 @@ class RegistrationForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if User.objects.filter(email=email).exists():
-            raise ValidationError('Email is already occupied')
+            raise ValidationError('Цей Email вже використовується. Введіть інший Email.')
         return email
     
     def clean_password_confirm(self):
         password = self.cleaned_data.get("password")
         password_confirm = self.cleaned_data.get("password_confirm")
         if password != password_confirm:
-            raise ValidationError("Passwords don't match")
+            raise ValidationError("Паролі не співпадають. Введіть однакові паролі.")
         return password_confirm

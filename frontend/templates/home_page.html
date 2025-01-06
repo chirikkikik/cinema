@@ -1,36 +1,4 @@
-<!DOCTYPE html>
-<html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Головна</title>
-  </head>
-  <body>
-    <h1>Фільми</h1>
-    <div>
-      {% for movie in movies %}
-      <div>
-        <h2>{{ movie.title }}</h2>
-        {% if movie.poster %}
-        <img
-          src="{{ movie.poster.url }}"
-          alt="{{ movie.title }}"
-          style="max-width: 200px"
-        />
-        {% else %}
-        <p>Зображення відсутнє</p>
-        {% endif %}
-        <p>Дата релізу: {{ movie.release_date|date:"d/m/y" }}</p>
-        <p>Цільова аудиторія: {{ movie.get_target_audience_display }}</p>
-        <p>Тривалість: {{ movie.duration }}</p>
-        <a href="{% url 'choose_screening' movie.id %}" class="btn btn-primary"
-          >Купити квиток</a
-        >
-      </div>
-      {% endfor %}
-    </div>
-  </body>
-</html>
+{% block content %}
 {% if user.is_authenticated %}
 <p>{{ user.username }}!</p>
 <a href="{% url 'logout' %}">Вийти</a>
@@ -39,3 +7,27 @@
 <a href="{% url 'login' %}">Увійти</a>
 <a href="{% url 'register' %}">Зареєструватися</a>
 {% endif %}
+<h1>Фільми</h1>
+<div>
+  {% for movie in movies %}
+  <div>
+    <h2>{{ movie.title }}</h2>
+    {% if movie.poster %}
+    <img
+      src="{{ movie.poster.url }}"
+      alt="{{ movie.title }}"
+      style="max-width: 200px"
+    />
+    {% else %}
+    <p>Зображення відсутнє</p>
+    {% endif %}
+    <p>Дата релізу: {{ movie.release_date|date:"d/m/y" }}</p>
+    <p>Цільова аудиторія: {{ movie.get_target_audience_display }}</p>
+    <p>Тривалість: {{ movie.duration }}</p>
+    <a href="{% url 'choose_screening' movie.id %}" class="btn btn-primary"
+      >Купити квиток</a
+    >
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

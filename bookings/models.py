@@ -42,9 +42,11 @@ class Booking(models.Model):
     
     def delete(self, *args, **kwargs):
         for ticket in self.tickets_booked.all():
-            self.remove_ticket(ticket)
+            ticket.is_booked = False
+            ticket.screening.increase_seat()
+            ticket.save()
+        self.tickets_booked.clear()
         super().delete(*args, **kwargs)
-        
         
     def __str__(self):
         return f"Booking for {self.user.username} at {self.screening.movie.title} on {self.screening.start_time}"

@@ -15,3 +15,4 @@
 <p>Загальна вартість: {{ total_cost }} грн</p>
 <a href="{% url 'choose_seat' booking.screening.id %}">Додати ще квиток</a>
 <a href="{% url 'payment_form' booking.id %}">Перейти до оплати</a>
+<a href="{% url 'cancel_booking' booking.id %}">Відмінити бронювання</a>

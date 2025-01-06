@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Booking, Ticket
 from movies.models import Screening
+from payments.models import Payment
 
 @login_required(login_url='/login/')
 def choose_screening(request, movie_id):
@@ -84,18 +85,13 @@ def remove_ticket_from_booking(request, ticket_id):
         messages.error(request, "Квиток не належить до жодного з ваших активних бронювань.")
         return redirect('user_profile')
 
-    ticket.is_booked = False
-    ticket.screening.increase_seat()
-    ticket.save()
-    
-    booking.tickets_booked.remove(ticket)
+    booking.remove_ticket(ticket)
     
     if not booking.tickets_booked.exists():
         booking.delete()
         return redirect('home_page')
 
     messages.success(request, "Квиток успішно видалено.")
-    print("Квиток видалено")
     return redirect('booking_summary', booking_id=booking.id)
 
 
@@ -104,14 +100,15 @@ def cancel_booking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user, status='pending')
     
     for ticket in booking.tickets_booked.all():
-        ticket.is_booked = False
-        ticket.screening.increase_seat()
-        ticket.save()
-    
+        if ticket.is_booked:
+            ticket.is_booked = False
+            ticket.save()
+            
     booking.delete()
     
     messages.info(request, "Ваше бронювання успішно скасовано.")
     return redirect('user_profile')
+
 
 
 
